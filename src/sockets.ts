@@ -1,5 +1,5 @@
 /* eslint-disable import/no-relative-packages */
-import { SocketEvent } from '../../shared/socket-event.enum';
+import { SocketEvent } from '../shared/socket-event.enum';
 
 export const connectLiveAgent = (conversation: any, agent: any) => ({
   type: SocketEvent.LIVE_AGENT_CONNECT,
