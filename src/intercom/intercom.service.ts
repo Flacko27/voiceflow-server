@@ -10,21 +10,22 @@ export class IntercomService {
 
   private readonly conversations = new Map<string, WebSocket>();
 
+  constructor() {
+    console.log('🛠️ INTERCOM_TOKEN:', process.env.INTERCOM_TOKEN);
+  }
+
   private send(conversationID: string, event: { type: string; data: any }) {
     const ws = this.conversations.get(conversationID);
-
     ws?.send(JSON.stringify(event));
   }
 
   public async connectAgent(conversation: any) {
     const agent = await this.intercom.admins.find({ id: conversation.admin_assignee_id });
-
     this.send(conversation.id, connectLiveAgent(conversation, agent));
   }
 
   public async disconnectAgent(conversation: any) {
     const agent = await this.intercom.admins.find({ id: conversation.admin_assignee_id });
-
     this.send(conversation.id, disconnectLiveAgent(conversation, agent));
     this.conversations.get(conversation.id)?.close();
     this.conversations.delete(conversation.id);
@@ -32,7 +33,6 @@ export class IntercomService {
 
   public async sendAgentReply(conversation: any) {
     const html = conversation.conversation_parts.conversation_parts.map((part: any) => part.body).join('\n');
-
     this.send(conversation.id, sendLiveAgentMessage(stripHtml(html).result));
   }
 
@@ -84,7 +84,6 @@ export class IntercomService {
     if (!conversation) return;
 
     ws.on('message', (message) => handler(JSON.parse(message.toString())));
-
     this.conversations.set(conversationID, ws);
   }
 }
