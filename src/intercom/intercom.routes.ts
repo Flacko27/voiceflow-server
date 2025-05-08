@@ -2,8 +2,8 @@
 import type { Application } from 'express-ws';
 import { match } from 'ts-pattern';
 
-import { LiveAgentPlatform } from '../shared/live-agent-platform.enum';
-import { SocketEvent } from '../shared/socket-event.enum';
+import { LiveAgentPlatform } from '../../shared/live-agent-platform.enum';
+import { SocketEvent } from '../../shared/socket-event.enum';
 import { IntercomService } from './intercom.service';
 import { IntercomTopic } from './intercom-topic.enum';
 
