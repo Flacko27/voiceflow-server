@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return, import/no-relative-packages */
 import type { Application } from 'express-ws';
 import { match } from 'ts-pattern';
+import fetch from 'node-fetch';
 
 import { LiveAgentPlatform } from '../../shared/live-agent-platform.enum';
 import { SocketEvent } from '../../shared/socket-event.enum';
@@ -55,5 +56,35 @@ export const intercomRoutes = (app: Application) => {
     res.json({ userID, conversationID });
 
     await intercom.sendHistory(userID, conversationID, req.body.history);
+  });
+
+  // ✅ New route for Voiceflow handoff to Intercom
+  app.post(`/intercom/handoff`, async (req, res) => {
+    const { userID, conversationID, message } = req.body;
+
+    try {
+      const response = await fetch('https://api.intercom.io/messages', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${process.env.INTERCOM_SECRET}`,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          from: {
+            type: 'user',
+            id: userID,
+          },
+          body: message,
+          message_type: 'inapp',
+        }),
+      });
+
+      const data = await response.json();
+      res.status(200).json({ success: true, data });
+    } catch (error: any) {
+      console.error('Intercom handoff error:', error);
+      res.status(500).json({ success: false, error: error.message });
+    }
   });
 };
