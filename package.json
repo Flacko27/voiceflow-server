@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "tsx --watch src/main.ts",
+    "start": "tsx src/main.ts",
     "test:types": "yarn g:tsc --noEmit"
   },
   "dependencies": {
