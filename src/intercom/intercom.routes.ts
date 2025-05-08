@@ -23,16 +23,19 @@ export const intercomRoutes = (app: Application) => {
     );
   });
 
-  app.head(`/${LiveAgentPlatform.INTERCOM}`, (_, res) => {
+  const initIntercom = (_: any, res: any) => {
     if (intercom) return res.send('ok');
-
+  
     try {
       intercom = new IntercomService();
       res.send('ok');
     } catch {
       res.status(500).send('invalid API key');
     }
-  });
+  };
+  
+  app.head(`/${LiveAgentPlatform.INTERCOM}`, initIntercom);
+  app.get(`/${LiveAgentPlatform.INTERCOM}`, initIntercom);
 
   app.head(`/${LiveAgentPlatform.INTERCOM}/webhook`, (_, res) => res.send('ok'));
 
